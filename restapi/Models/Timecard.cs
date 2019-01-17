@@ -187,26 +187,44 @@ namespace restapi.Models
             return annotatedLine;
         }
 
-        public AnnotatedTimecardLine FindLine(Timecard timecard, string lineId, TimecardLine timecardLine, string task) 
+        public AnnotatedTimecardLine FindLine(string lineId, TimecardLine timecardLine, string task) 
         {
             var annotatedLine = new AnnotatedTimecardLine(timecardLine);
 
             int lineNumber = 0;
-            foreach (AnnotatedTimecardLine line in timecard.Lines)
+            foreach (AnnotatedTimecardLine line in Lines)
             {
                 if (line.UniqueIdentifier.ToString() == lineId) 
                 {
                     if (task == "replace")
                     {
-                       timecard.Lines.RemoveAt(lineNumber);
-                       timecard.Lines.Insert(lineNumber, new AnnotatedTimecardLine(timecardLine));
+                       Lines[lineNumber] = annotatedLine;
                     } 
                     else if (task == "update")
                     {
-                        timecard.Lines[lineNumber] = (AnnotatedTimecardLine)timecardLine;
+                        if (annotatedLine.Week > 0) 
+                        {
+                            Lines[lineNumber].Week = annotatedLine.Week;
+                        }
+                        if (annotatedLine.Year > 0) 
+                        {
+                            Lines[lineNumber].Year = annotatedLine.Year;
+                        }
+                        if (annotatedLine.Day != null) 
+                        {
+                            Lines[lineNumber].Day = annotatedLine.Day;
+                        }
+                        if (annotatedLine.Hours > 0) 
+                        {
+                            Lines[lineNumber].Hours = annotatedLine.Hours;
+                        }
+                        if (annotatedLine.Project != null) 
+                        {
+                            Lines[lineNumber].Project = annotatedLine.Project;
+                        }
 
                     }
-                    return timecard.Lines[lineNumber]; 
+                    return Lines[lineNumber]; 
                 }
                 lineNumber++;
             }

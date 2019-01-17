@@ -142,13 +142,14 @@ namespace restapi.Controllers
             }
 
             // check if line exists
-            AnnotatedTimecardLine annotatedTimecardLine = null;
-            annotatedTimecardLine = timecard.FindLine(timecard, lineId, timecardLine, "replace");
+            AnnotatedTimecardLine annotatedTimecardLine = timecard.FindLine(lineId, timecardLine, "replace");
 
-            if (annotatedTimecardLine == null) {
+            if (annotatedTimecardLine == null) 
+            {
                 return NotFound();
             }
-            else {
+            else 
+            {
                 return Ok(annotatedTimecardLine);
             }
 
@@ -176,13 +177,14 @@ namespace restapi.Controllers
             }
 
             // check if line exists
-            AnnotatedTimecardLine annotatedTimecardLine = null;
-            annotatedTimecardLine = timecard.FindLine(timecard, lineId, timecardLine, "update");
+            AnnotatedTimecardLine annotatedTimecardLine = timecard.FindLine(lineId, timecardLine, "update");
 
-            if (annotatedTimecardLine == null) {
+            if (annotatedTimecardLine == null) 
+            {
                 return NotFound();
             }
-            else {
+            else 
+            {
                 return Ok(annotatedTimecardLine);
             }
 
