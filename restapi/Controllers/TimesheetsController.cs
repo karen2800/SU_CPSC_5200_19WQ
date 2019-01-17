@@ -119,6 +119,74 @@ namespace restapi.Controllers
                 return NotFound();
             }
         }
+
+        // Replace line
+        [HttpPost("{timecardId}/lines/{lineId}")]
+        [Produces(ContentTypes.TimesheetLine)]
+        [ProducesResponseType(typeof(AnnotatedTimecardLine), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(InvalidStateError), 409)]
+        public IActionResult ReplaceLine(string timecardId, string lineId, [FromBody] TimecardLine timecardLine) 
+        {
+            Timecard timecard = Database.Find(timecardId);
+
+            if (timecard == null)
+            {
+                return NotFound();
+            }
+
+            // check state
+            if (timecard.Status != TimecardStatus.Draft)
+            {
+                return StatusCode(409, new InvalidStateError() { });
+            }
+
+            // check if line exists
+            AnnotatedTimecardLine annotatedTimecardLine = null;
+            annotatedTimecardLine = timecard.FindLine(timecard, lineId, timecardLine, "replace");
+
+            if (annotatedTimecardLine == null) {
+                return NotFound();
+            }
+            else {
+                return Ok(annotatedTimecardLine);
+            }
+
+        }
+
+        // Update line
+        [HttpPatch("{timecardId}/lines/{lineId}")]
+        [Produces(ContentTypes.TimesheetLine)]
+        [ProducesResponseType(typeof(AnnotatedTimecardLine), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(InvalidStateError), 409)]
+        public IActionResult UpdateLine(string timecardId, string lineId, [FromBody] TimecardLine timecardLine) 
+        {
+            Timecard timecard = Database.Find(timecardId);
+
+            if (timecard == null)
+            {
+                return NotFound();
+            }
+
+            // check state
+            if (timecard.Status != TimecardStatus.Draft)
+            {
+                return StatusCode(409, new InvalidStateError() { });
+            }
+
+            // check if line exists
+            AnnotatedTimecardLine annotatedTimecardLine = null;
+            annotatedTimecardLine = timecard.FindLine(timecard, lineId, timecardLine, "update");
+
+            if (annotatedTimecardLine == null) {
+                return NotFound();
+            }
+            else {
+                return Ok(annotatedTimecardLine);
+            }
+
+        }
         
         [HttpGet("{id}/transitions")]
         [Produces(ContentTypes.Transitions)]

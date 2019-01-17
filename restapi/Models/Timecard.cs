@@ -83,6 +83,22 @@ namespace restapi.Models
                         Relationship = ActionRelationship.RecordLine,
                         Reference = $"/timesheets/{Identity.Value}/lines"
                     });
+
+                    // replace line
+                    links.Add(new ActionLink() {
+                        Method = Method.Post,
+                        Type = ContentTypes.TimesheetLine,
+                        Relationship = ActionRelationship.ReplaceLine,
+                        Reference = $"/timesheets/{Identity.Value}/lines/{UniqueIdentifier.ToString()}"
+                    });
+
+                    // delete
+                    links.Add(new ActionLink() {
+                        Method = Method.Delete,
+                        Type = ContentTypes.Timesheet,
+                        Relationship = ActionRelationship.Delete,
+                        Reference = $"/timesheets/{Identity.Value}/delete"
+                    });
                 
                     break;
 
@@ -115,7 +131,13 @@ namespace restapi.Models
                     break;
 
                 case TimecardStatus.Cancelled:
-                    // terminal state, nothing possible here
+                    // delete
+                    links.Add(new ActionLink() {
+                        Method = Method.Delete,
+                        Type = ContentTypes.Timesheet,
+                        Relationship = ActionRelationship.Delete,
+                        Reference = $"/timesheets/{Identity.Value}/delete"
+                    });
                     break;
             }
 
@@ -164,5 +186,34 @@ namespace restapi.Models
 
             return annotatedLine;
         }
+
+        public AnnotatedTimecardLine FindLine(Timecard timecard, string lineId, TimecardLine timecardLine, string task) 
+        {
+            var annotatedLine = new AnnotatedTimecardLine(timecardLine);
+
+            int lineNumber = 0;
+            foreach (AnnotatedTimecardLine line in timecard.Lines)
+            {
+                if (line.UniqueIdentifier.ToString() == lineId) 
+                {
+                    if (task == "replace")
+                    {
+                       timecard.Lines.RemoveAt(lineNumber);
+                       timecard.Lines.Insert(lineNumber, new AnnotatedTimecardLine(timecardLine));
+                    } 
+                    else if (task == "update")
+                    {
+                        timecard.Lines[lineNumber] = (AnnotatedTimecardLine)timecardLine;
+
+                    }
+                    return timecard.Lines[lineNumber]; 
+                }
+                lineNumber++;
+            }
+
+            return null;
+
+        }
+
     }
 }
