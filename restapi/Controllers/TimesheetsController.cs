@@ -214,6 +214,7 @@ namespace restapi.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(InvalidStateError), 409)]
         [ProducesResponseType(typeof(EmptyTimecardError), 409)]
+        [ProducesResponseType(typeof(ResourceInconsistentError), 409)]
         public IActionResult Submit(string id, [FromBody] Submittal submittal)
         {
             Timecard timecard = Database.Find(id);
@@ -338,6 +339,7 @@ namespace restapi.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(InvalidStateError), 409)]
         [ProducesResponseType(typeof(EmptyTimecardError), 409)]
+        [ProducesResponseType(typeof(ResourceInconsistentError), 409)]
         public IActionResult Close(string id, [FromBody] Rejection rejection)
         {
             Timecard timecard = Database.Find(id);
@@ -399,6 +401,7 @@ namespace restapi.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(InvalidStateError), 409)]
         [ProducesResponseType(typeof(EmptyTimecardError), 409)]
+        [ProducesResponseType(typeof(ResourceInconsistentError), 409)]
         public IActionResult Approve(string id, [FromBody] Approval approval)
         {
             Timecard timecard = Database.Find(id);
