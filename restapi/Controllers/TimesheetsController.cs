@@ -216,26 +216,29 @@ namespace restapi.Controllers
         {
             Timecard timecard = Database.Find(id);
 
-            if (timecard != null)
-            {
-                if (timecard.Status != TimecardStatus.Draft)
-                {
-                    return StatusCode(409, new InvalidStateError() { });
-                }
-
-                if (timecard.Lines.Count < 1)
-                {
-                    return StatusCode(409, new EmptyTimecardError() { });
-                }
-                
-                var transition = new Transition(submittal, TimecardStatus.Submitted);
-                timecard.Transitions.Add(transition);
-                return Ok(transition);
-            }
-            else
+            if (timecard == null)
             {
                 return NotFound();
             }
+
+            if (timecard.Status != TimecardStatus.Draft)
+            {
+                return StatusCode(409, new InvalidStateError() { });
+            }
+
+            if (timecard.Lines.Count < 1)
+            {
+                return StatusCode(409, new EmptyTimecardError() { });
+            }
+
+            if (timecard.Resource != submittal.Resource) 
+            {
+                return StatusCode(409, new ResourceInconsistentError() { });
+            }
+                
+            var transition = new Transition(submittal, TimecardStatus.Submitted);
+            timecard.Transitions.Add(transition);
+            return Ok(transition);
         }
 
         [HttpGet("{id}/submittal")]
@@ -337,21 +340,24 @@ namespace restapi.Controllers
         {
             Timecard timecard = Database.Find(id);
 
-            if (timecard != null)
-            {
-                if (timecard.Status != TimecardStatus.Submitted)
-                {
-                    return StatusCode(409, new InvalidStateError() { });
-                }
-                
-                var transition = new Transition(rejection, TimecardStatus.Rejected);
-                timecard.Transitions.Add(transition);
-                return Ok(transition);
-            }
-            else
+            if (timecard == null)
             {
                 return NotFound();
             }
+
+            if (timecard.Status != TimecardStatus.Submitted)
+            {
+                return StatusCode(409, new InvalidStateError() { });
+            }
+
+            if (timecard.Resource == rejection.Resource)
+            {
+                return StatusCode(409, new ResourceInconsistentError() { });
+            }
+                
+            var transition = new Transition(rejection, TimecardStatus.Rejected);
+            timecard.Transitions.Add(transition);
+            return Ok(transition);
         }
 
         [HttpGet("{id}/rejection")]
@@ -395,21 +401,24 @@ namespace restapi.Controllers
         {
             Timecard timecard = Database.Find(id);
 
-            if (timecard != null)
-            {
-                if (timecard.Status != TimecardStatus.Submitted)
-                {
-                    return StatusCode(409, new InvalidStateError() { });
-                }
-                
-                var transition = new Transition(approval, TimecardStatus.Approved);
-                timecard.Transitions.Add(transition);
-                return Ok(transition);
-            }
-            else
+            if (timecard == null)
             {
                 return NotFound();
             }
+
+            if (timecard.Status != TimecardStatus.Submitted)
+            {
+                return StatusCode(409, new InvalidStateError() { });
+            }
+
+            if (timecard.Resource == approval.Resource)
+            {
+                return StatusCode(409, new ResourceInconsistentError() { });
+            }
+                
+            var transition = new Transition(approval, TimecardStatus.Approved);
+            timecard.Transitions.Add(transition);
+            return Ok(transition);
         }
 
         [HttpGet("{id}/approval")]
