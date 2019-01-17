@@ -92,6 +92,14 @@ namespace restapi.Models
                         Reference = $"/timesheets/{Identity.Value}/lines/{UniqueIdentifier.ToString()}"
                     });
 
+                    // update line
+                    links.Add(new ActionLink() {
+                        Method = Method.Patch,
+                        Type = ContentTypes.TimesheetLine,
+                        Relationship = ActionRelationship.UpdateLine,
+                        Reference = $"/timesheets/{Identity.Value}/lines/{UniqueIdentifier.ToString()}"
+                    });
+
                     // delete
                     links.Add(new ActionLink() {
                         Method = Method.Delete,

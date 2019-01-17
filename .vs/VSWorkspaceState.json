@@ -5,6 +5,6 @@
     "\\restapi\\Controllers",
     "\\restapi\\Models"
   ],
-  "SelectedNode": "\\restapi\\Controllers\\TimesheetsController.cs",
+  "SelectedNode": "\\restapi\\Models\\Timecard.cs",
   "PreviewInSolutionExplorer": false
 }
